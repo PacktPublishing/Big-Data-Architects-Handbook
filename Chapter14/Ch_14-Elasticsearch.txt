@@ -1,0 +1,138 @@
+Elasticsearch Installation
+===========================
+execute the following command in order to install it using command line:
+$ sudo gdebi elasticsearch-6.2.2.deb
+
+Start Elasticsearch Server
+============================
+Execute the following command to start server:
+
+$ sudo service elasticsearch start
+
+Auto-start Elasticsearch Service
+==================================
+execute the following command:
+
+$ sudo /bin/systemctl daemon-reload
+$ sudo /bin/systemctl enable elasticsearch.service
+
+Stop Elasticsearch server
+===========================
+execute the following command:
+
+$ sudo service elasticsearch stop
+
+Uninstall Elasticsearch
+========================
+execute the following command:
+
+$ sudo apt remove elasticsearch
+
+Kibana Installation
+=====================
+execute the following command:
+
+$ sudo gdebi kibana-6.2.2-amd64.deb
+
+Start Kibana
+=============
+executing the following command:
+
+$ sudo service kibana start
+
+Uninstall Kibana
+=================
+Execute the following command:
+
+$ sudo apt remove kibana
+
+Securing Elasticsearch
+========================
+browse to the installation folder of Elasticsearch, which in our case is /usr/share/elasticsearch/bin:
+
+$ cd /usr/share/elasticsearch/bin
+
+Install X-Pack plugin for Elasticsearch:
+
+$ sudo ./elasticsearch-plugin install x-pack
+
+Once it finishes, Execute the following command to start up the process of setting password:
+
+$ sudo ./x-pack/setup-passwords auto
+
+Securing Kibana
+================
+Browse to the installation folder of Kibana, which in our case is /usr/share/kibana/bin:
+
+$ cd /usr/share/kibana/bin
+
+Install X-Pack plugin for Kibana:
+
+$ sudo ./kibana-plugin install x-pack
+
+Execute the following command to start editing the configuration file of kibana to setup passwords: 
+
+$ sudo nano kibana.yml
+
+Restart Kibana service in order to apply all the configurations:
+
+$ sudo service kibana restart 
+First step is to start Kibana service by executing the following commands, if its not already started:
+
+Executing CRUD
+=================
+
+$ sudo service kibana start
+$ sudo service kibana status
+Now point your browser to http://localhost:5601/  
+
+Create
+=========
+
+Example1:
+-------------------------
+POST /student/detail
+{
+  "name" : "Smith",
+  "age" : 10,
+  "phone" : "1-234-567890",
+  "address" : "some where on earth"
+}
+
+Example2:
+--------------------------
+PUT /student/detail/1
+{
+  "name" : "JohnDoe",
+  "age" : 12,
+  "phone" : "2-584-5222890",
+  "address" : "some where in the universe"
+}
+Read
+======================
+
+Example1:
+--------------------------
+
+GET /student/detail/1
+
+Example2:
+--------------------------
+GET /student/detail/_search
+
+
+Update
+=========
+
+POST /student/detail/1/_update
+{
+  "doc" : {
+      "phone" : "1-012-9876543"
+  }
+}
+
+Delete
+=======
+
+DELETE /student/detail/1
+

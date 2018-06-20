@@ -1,0 +1,228 @@
+React JS:
+<div id="contentContainer"></div>
+
+<script>
+ReactDom.render(
+            React.createElement('h1', null, 'Welcome'),
+            document.getElementById('contentContainer'));
+</script>
+<div id="contentContainer"></div>
+
+<script type="text/babel">
+ReactDom.render(
+            <h1>Welcome</h1>,
+            document.getElementById('contentContainer'));
+</script>
+// 1 -- React Library
+<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+
+// 2 -- React DOM Library
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+// 3 -- Babel for JSX compilation
+<script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello World</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+      ReactDOM.render(
+        <h1>Hello, world!. Welcome to React App</h1>,
+        document.getElementById('root')
+      );
+
+    </script>
+  </body>
+</html>
+
+
+// This will install NodeJS framework
+$ sudo apt-get install nodejs
+
+// This will install NodeJS Package Manager (NPM)
+$ sudo apt-get install npm
+
+// This will install NPX. It is used to executes NPM binaries task
+$ sudo npm install -g npx
+
+
+// You can use any name instead of my-app. What ever name you mention
+// it will create a folder with that name and set up your React app in it.
+$ npx creat-react-app my-app
+
+
+my-app/
+  README.md
+  node_modules/
+  package.json
+  public/
+    index.html
+    favicon.ico
+  src/
+    App.css
+    App.js
+    App.test.js
+    index.css
+    index.js
+    logo.svg
+
+
+import React, { Component } from 'react';
+
+class Header extends Component {
+  render() {
+    return (
+      <h1>Welcome to my Website</h1>
+    );
+  }
+}
+
+export default Header;
+
+
+
+import React, { Component } from 'react';
+
+class Header extends Component {
+  render() {
+    return (<div>
+                <h1>Welcome to my website</h1>
+                <img src='logo.jpg' />
+            </div>);
+  }
+}
+
+export default Header;
+
+
+
+import React, { Component } from 'react';
+
+class Image extends Component {
+  render() {
+    return (
+      <div>
+          <img src={this.props.file} />
+          <h2>{this.props.title}</h2>
+          <h4>{this.props.postyear}</h4>
+      </div>
+    );
+  }
+}
+
+export default Image;
+
+
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Image from './Image';
+import './index.css';
+import registerServiceWorker from './registerServiceWorker';
+
+ReactDOM.render(
+  <div className='imgdiv'>
+    <Image file='tree.jpg' title='Tree' postyear='2017' />
+    <Image file='flower.jpg' title='Flower' postyear='2016' />
+    <Image file='mont.jpg' title='Mountain' postyear='2015' />
+  </div>
+, document.getElementById('root'));
+
+registerServiceWorker();
+
+
+import React, { Component } from 'react';
+
+class Image extends Component {
+  description = () => {
+      alert(this.props.children);
+  }
+
+  render() {
+    return (
+      <div className='imgdiv'>
+           <img onClick={this.description} src={this.props.file} className='gallery' />
+          <h2>{this.props.title}</h2>
+          <h4>{this.props.postyear}</h4>
+      </div>
+    );
+  }
+}
+
+export default Image;
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Image from './Image';
+import './index.css';
+
+ReactDOM.render(
+  <div className='imgdiv'>
+    <Image file='tree.jpg' title='Tree' postyear='2017'>Picture of a tree</Image>
+    <Image file='flower.jpg' title='Flower' postyear='2016'>Picture of a Flower</Image>
+    <Image file='mont.jpg' title='Mountain' postyear='2015'>Picture of a Mountain</Image>
+  </div>
+, document.getElementById('root'));
+render() {
+   var selectedColor = this.state.color;
+    return (
+      <div>
+         <select onChange={this.setColor} value={selectedColor}>
+          <option>Red</option>
+          <option>Green</option>
+          <option>Yellow</option>
+          <option>Blue</option>
+        </select>
+        <br/>
+        <h2 className={selectedColor}>
+          Selected color is : {selectedColor}
+        </h2>
+  </div>
+    );
+  }
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import AddComment from './AddComment';
+import DisplayComment from './DisplayComment';
+import { createStore } from "redux";
+import { Provider } from "react-redux";
+
+const initialState = {
+  commentList: []
+};
+
+function reducer(state = initialState, action) {
+  switch (action.type) {
+    case "AddComment": 
+      return {
+        commentList: state.commentList.concat(action.payload)
+      };
+    default:
+      return state
+  } 
+}
+
+const store = createStore(reducer);
+ 
+ReactDOM.render(
+  <div>
+    <Provider store={store}>
+      <AddComment />
+    </Provider>
+    <br/>
+    <Provider store={store}>
+      <DisplayComment commentList={this.commentList} />
+    </Provider>
+  </div>
+  , document.getElementById('root'));

@@ -1,0 +1,168 @@
+Matplotlib Installation
+======================== 
+execute the following command:
+
+$ sudo pip install matplotlib
+
+Python thinker package install using the following command:
+
+$ sudo apt install python-tk
+
+Line Chart
+============
+Our first program in Python code:
+------------------------------------------------
+import matplotlib.pyplot as plt
+
+x = [1, 5, 3, 7]
+y = [2, 5, 1, 5]
+
+plt.plot(x, y)
+plt.show()
+------------------------------------------------
+
+Now execute the following command to run it:
+
+$ cd ~/Matplotlib
+$ python linechart.py
+
+Bar Charts
+============
+
+-------------------------------------------------
+import matplotlib.pyplot as plt
+
+x = [1, 5, 3, 7]
+y = [2, 5, 1, 5]
+
+plt.bar(x, y)
+plt.show()
+
+-------------------------------------------------
+
+Now execute it using the following command:
+
+$ python barchart.py
+
+Stack charts
+===============
+
+import matplotlib.pyplot as plt
+
+a = [1, 2, 3, 4]
+w = [7, 5, 12, 14]
+x = [3, 2, 4, 1]
+y = [8, 9, 7, 6]
+z = [5, 7, 6, 10]
+
+plt.stackplot(a, w, x, y, z)
+plt.title("My Stackplot Chart")
+plt.show()
+-------------------------------------------------
+
+Now execute it using the following command:
+
+$ python stackchart.py
+
+Scatter Chart
+==============
+
+import matplotlib.pyplot as plt
+
+x = [1, 2, 3, 2, 4]
+y = [2, 4, 1, 3, 3]
+
+plt.scatter(x, y, marker="*", s=100)
+plt.title("Scatter Chart")
+plt.show()
+--------------------------
+
+Now execute it using the following command:
+
+$ python scatterchart.py
+
+Pie Chart
+=====================
+
+import matplotlib.pyplot as plt
+
+ratio = [7, 9, 5, 4]
+agegroup = ["Adults", "Teenager", "Elderly", "Children"]
+
+plt.pie(ratio, labels=agegroup)
+plt.title("Population Age group ratio Chart")
+plt.show()
+-------------------------------------------------------------------
+
+Now execute it using the following command:
+
+$ python scatterchart.py
+
+Geographic Projections
+========================
+
+import matplotlib.pyplot as plt
+
+plt.figure()
+plt.subplot(111, projection="hammer")
+plt.title("Hammer")
+plt.grid(True)
+plt.show()
+-----------------------------------------------------------------------
+
+Now execute it using the following command:
+
+$ python stackchart.py
+
+D3.js Practical Example
+=========================
+
+The complete HTML file barchart.html will look as below:
+
+----------------------------------------------------
+
+<html>
+<head>
+
+<title>Barchart Example</title>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<link rel = "stylesheet" type = "text/css" href="barchart.css" />
+
+</head>
+
+<body>
+
+<h1>Barchart</h1>
+<script src="barchart.js"></script>
+
+</body>
+</html>
+-------------------------------------------------------------
+barchart.js
+=============
+
+var chartdata= [120,100, 20, 40, 70, 150, 10, 30, 50, 250];
+
+d3.select("body").selectAll("div")
+  .data(chartdata)
+  .enter()
+  .append("div")
+  .attr("class","bar")
+  .style("height", function(d) {
+    return d + "px";
+  });
+
+---------------------------------------------------------------
+
+barchart.css
+==============
+body {
+  background-color: #8FE985;
+}
+div.bar {
+  display: inline-block;
+  width:30px;
+  background-color:blue;
+  margin-right:10px;
+}
+

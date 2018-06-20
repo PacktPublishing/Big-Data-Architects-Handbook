@@ -1,0 +1,171 @@
+Flume Installation
+===================
+Execute the following command to extract the downloaded Flume.
+
+$ cd ~/
+$ tar -zxvf apache-flume-1.8.0-bin.tar.gz
+
+Environment Configuration
+==========================
+edit the bashrc file by executing the following command.
+
+$ sudo nano ~/.bashrc
+
+Once it opens, go to end of the file and write the following:
+
+#Apache Flume
+export FLUME_HOME="/home/hadoopadmin/apache-flume-1.8.0-bin"
+export PATH=$PATH:$FLUME_HOME/bin
+
+Reload the bashrc file by executing the following command:
+
+$ source ~/.bashrc
+
+Configure Agent and Sink
+=========================
+save it by the name of flume-agent.conf. 
+---------------------------------------------------------------------
+
+agent.sources=netcatSource
+agent.sinks=hdfsWriter
+agent.channels=memoryChannel
+
+agent.sources.netcatSource.type=netcat
+agent.sources.netcatSource.bind=127.0.0.1
+agent.sources.netcatSource.port=22222
+
+agent.sinks.hdfsWriter.type=hdfs
+agent.sinks.hdfsWriter.hdfs.path=hdfs://localhost:9000/flumeData/
+agent.sinks.hdfsWriter.rollInterval=60
+agent.sinks.hdfsWriter.hdfs.writeFormat=Text
+agent.sinks.hdfsWriter.hdfs.fileType=DataStream
+
+agent.channels.memoryChannel.type=memory
+agent.channels.memoryChannel.capacity=10000
+
+agent.sources.netcatSource.channels=memoryChannel
+agent.sinks.hdfsWriter.channel=memoryChannel
+
+------------------------------------------------------------------------------
+
+Running Apache Flume
+=====================
+Executing the following commands:
+
+$ cd $FLUME_HOME
+$ flume-ng agent -f flume-agent.conf -n agent
+
+Transfer Log file
+====================
+We have created a sample log file in $FLUME_HOME path
+
+We will now send this log file by executing the following command:
+
+$ head sample.log | nc 127.0.0.1 22222
+
+Execute the following command first to list the file created in the file system:
+
+$ hdfs dfs -ls /flumeData
+
+Execute the following command to view the contents of the first file just to verify that the contents of the sample log file has been successfully transfer:
+
+$ hdfs dfs -cat /flumeData/FlumeData.1524237471655
+
+Execute the following command to view the content of the second file:
+
+$ hdfs dfs -cat /flumeData/FlumeData.1524237471656
+
+Convert Image into Text for Analyses
+======================================
+
+Install Tesseract
+===================
+First step is to install Tesseract in Ubuntu by executing the following command:
+
+$ sudo apt-get install tesseract-ocr
+
+Practical Example
+=====================
+Complete code of the program to convert an image into text is as follows. Make sure to keep the indent to make sure python program execute as expected:
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+import sys
+import os
+import argparse
+from subprocess import call
+
+STDNULL = open(os.devnull, 'w')
+
+def main(img, outPath):
+    print("==============================================================")
+    print("BigData Architect's Handbook Example: Convert Image into text")
+    print("==============================================================\n")
+    
+    # Checking whether Tesseract Library is installed in the system
+    print("Checking whether tesseract library is installed ...")
+    if (call(['which', 'tesseract'])):
+        print("Tesseract is not installed. Please install it first")
+        print("If you are in Linux environment, please execute the following command in terminal in order to install it")
+        print("sudo apt-get install tesseract-ocr")
+        sys.exit(1)
+    else:
+        print("It is installed on the above mentioned path")
+        print("---------------------------------------------\n")
+        
+        # Absolute path of the directory where the image is placed
+        img = os.path.abspath(img)
+        inputDirectory = os.path.dirname(img)
+        
+        print("Working Directory \t: " + inputDirectory)
+        print("Image File Name \t: " + img)
+        
+        # Output filename based on the input image file with -text postfix
+        textFileName = os.path.splitext(img)[0] + "-text"
+        if (outPath is not None):
+            # Get the absolute path of the output directory
+            outputDirectory = os.path.abspath(outPath)
+
+            # check whether the output directory exist or not
+            if (not os.path.exists(outputDirectory)):
+                # if not, create the directory
+                os.makedirs(outputDirectory)
+
+            # Generate the complete name along with absolute path of the generated text file
+            textFileName = os.path.join(outputDirectory, textFileName)
+        else:
+            textFileName = os.path.join(inputDirectory, textFileName)
+            
+        print("Output Filename \t: " + textFileName +"\n")
+
+        # Convert the image into Text
+        call(["tesseract", img, textFileName], stdout=STDNULL)
+
+        if (os.path.exists(textFileName + ".txt")):
+            print("Operation completed and the output text has been generated")
+        else:
+            print("Something went wrong. Please rerun the process")
+
+
+if __name__ == '__main__':
+    parse = argparse.ArgumentParser()
+    parse.add_argument("img", help="Image file name is required to convert it to text")
+    parse.add_argument("outPath", nargs="?", help="(optional) Path to store converted Text from image, \
+                 or else it will place the text in the same directory")
+    args = parse.parse_args()
+    main(args.img, args.outPath)
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+
+Program Execution
+=====================
+Execute the following program:
+
+$ cd ~/ImageToText/
+$ python imgToText.py sample.png 
+
+Execute the following command to view the output:
+
+$ cat sample-text.text
+

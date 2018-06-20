@@ -1,0 +1,129 @@
+TensorFlow installation :
+==========================
+First step is to check whether python is already installed in your computer by issuing the following command in your terminal:
+
+$ python --version
+
+Issue the following command in order to install it in your computer:
+
+$ sudo apt-get install python
+
+If you have python version 2.7.x in your machine, execute the following command:
+
+$ sudo apt-get install python-pip python-dev 
+
+If you have python version 3.x in you machine, execute the following command:
+
+$ sudo apt-get install python3-pip python3-dev
+
+Once the pip get installed, it's now time to install TensorFlow. If you have python version 2.7.x in your machine, execute the following command:
+
+$ sudo pip install tensorflow
+
+If you have python version 3.x in your machine, execute the following command:
+
+$ sudo pip3 install tensorflow
+
+# For Python 2.7.x
+$ sudo pip install tensorflow-gpu
+
+# For Python 3.x
+$ sudo pip3 install tensorflow-gpu
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+TensorFlow Program
+===================
+First step is to copy the following code in a file and save it as tensor.py. The complete path in my case is /home/fahad/tensorflow/tensor.py
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+import tensorflow as tf
+
+hello = tf.constant('Hello world. I have successfully installed TensorFlow!')
+
+sess = tf.Session()
+print(sess.run(hello))
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Once you save it, navigate to the saved path from with in your terminal and execute the following command.
+$ python3 tensor.py
+
+Uninstall TensorFlow:
+======================
+If at any point of time, you need to uninstall TensorFlow from your computer, just execute the following command, if you installed it for Python 2.7.x:
+$ sudo pip uninstall tensorflow
+If you installed TensorFlow for Python 3.x, execute the following command:
+$ sudo pip3 uninstall tensorflow
+
+Tensorboard:
+============
+
+Following code has been implemented to calculate the result of the given equation using TensorFlow framework in Python:
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+import tensorflow as tf
+
+# Define the required placeholder
+A = tf.placeholder(tf.float32, name="a")
+B = tf.placeholder(tf.float32, name="b")
+C = tf.placeholder(tf.float32, name="c")
+
+# Equation to solve
+calculation = (A * B) + (C / B) * A - C
+
+# Starting TensorFlow session to calculate result
+with tf.Session() as session:
+    result = session.run(calculation, feed_dict= {A: 1, B: 2, C: 3})
+    
+    # Output the session in a log directory
+    writer = tf.summary.FileWriter('/home/fahad/tensorflow/log/calculation', 
+session.graph)
+
+    # Output the result in terminal
+    print (result)
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Execute the following command in order to compile the code and run it.
+
+$ python3 tensorboard.py
+
+Start Tensorboard:
+==================
+
+$ python3 -m tensorboard.main --logdir=/home/fahad/tensorflow/log
+
+
+YOLO Installation
+==================
+Execute the following command to install git:
+$ sudo apt-get install git
+
+Create a directory in you home folder called YOLO:
+
+$ mkdir ~/YOLO/
+$ cd ~/YOLO/
+
+Clone the git repository by issuing the following command:
+$ git clone https://github.com/pjreddie/darknet
+
+Compile YOLO library:
+=====================
+Once the download finishes, its time to browse into the darknet directory and compile the code by executing the following command:
+$ cd darknet
+$ make
+
+Trained Weights:
+================
+Execute this command in darknet directory:
+
+$ wget https://pjreddie.com/media/files/yolo.weights
+
+Detecting Objects in an Image:
+==============================
+Execute the following command with correct sample image path:
+
+$ ./darknet detect cfg/yolo.cfg yolo.weights data/sample.jpg
+

@@ -1,0 +1,222 @@
+MySQL Installation
+==================
+Execute the following command to install it.
+
+$ sudo apt-get install mysql-server
+
+Data Import
+============
+Copy the following code in to a text file and save it as employees.sql into /usr/bin/ folder.
+///////////////////////////////////////////////////////////////////////////////////////////// 
+
+-- Host: localhost Database: employees
+-- ------------------------------------------------------
+-- Server version 5.7.21-0ubuntu0.17.10.1
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Current Database: `employees`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `employees` /*!40100 DEFAULT CHARACTER SET latin1 */;
+
+USE `employees`;
+
+--
+-- Table structure for table `empInfo`
+--
+
+DROP TABLE IF EXISTS `empInfo`;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `empInfo` (
+  `empId` int(11) NOT NULL,
+  `empName` varchar(45) DEFAULT NULL,
+  `phoneNo` varchar(45) DEFAULT NULL,
+  `address` varchar(45) DEFAULT NULL,
+  `designation` varchar(45) DEFAULT NULL,
+  `department` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`empId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `empInfo`
+--
+
+LOCK TABLES `empInfo` WRITE;
+/*!40000 ALTER TABLE `empInfo` DISABLE KEYS */;
+INSERT INTO `empInfo` VALUES (1,'John Smith','123456789','somewhere on earth','clerk','Accounts'),(2,'John Doe','987987999','somewhere on universe','engineer','Development'),(3,'Smith','5432123456','somewhere','engineer','Development'),(4,'Andrew','331222345','under the hood','manager','Development'),(5,'Troy','9102385731','nowhere','director','Business');
+/*!40000 ALTER TABLE `empInfo` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `empSalary`
+--
+
+DROP TABLE IF EXISTS `empSalary`;
+/*!40101 SET @saved_cs_client = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `empSalary` (
+  `salaryId` int(11) NOT NULL,
+  `salaryMonth` varchar(10) DEFAULT NULL,
+  `empId` int(11) DEFAULT NULL,
+  `salaryAmount` double DEFAULT NULL,
+  PRIMARY KEY (`salaryId`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `empSalary`
+--
+
+LOCK TABLES `empSalary` WRITE;
+/*!40000 ALTER TABLE `empSalary` DISABLE KEYS */;
+INSERT INTO `empSalary` VALUES (1,'2018-04',1,1025),(2,'2018-04',2,2556),(3,'2018-04',3,1500),(4,'2018-04',4,5000),(5,'2018-04',5,4780);
+/*!40000 ALTER TABLE `empSalary` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Execute the following command to load it into MySQL:
+
+$ mysql -u root -p < employees.sql
+
+Analyzing Data Model
+======================
+Execute the following command to login to MySQL instance:
+
+$ mysql -u root -p
+mysql> use employees;
+mysql> show tables;
+mysql> describe empInfo;
+mysql> describe empSalary;
+mysql> select * from empInfo;
+mysql> Select * from empSalary;
+
+HBase Installation
+===================
+Execute the following command to extract the files in this archive.
+
+$ tar -zxvf hbase-1.4.3-bin.tar.gz
+$ cd ~/hbase-1.4.3/conf
+$ sudo nano hbase-env.sh
+
+export JAVA_HOME="/home/hadoopadmin/jdk1.8.0_144/"
+export HBASE_MANAGES_ZK=true
+
+$ cd ~/hbase-1.4.3/
+$ mkdir datafiles
+
+$ cd ~/hbase-1.4.3/conf
+$ sudo nano hbase-site.xml
+
+Copy the following code in between <configuration></configuration> tag.
+
+<property>
+      <name>hbase.rootdir</name>
+      <value>hdfs://localhost:9000/hbase</value>
+</property>
+
+Start HBase Instance
+=====================
+Execute the following command in order to create it, if not already done:
+
+$ hdfs dfs -mkdir /hbase
+$ cd ~/hbase-1.4.3/bin
+$ ./start-hbase.sh
+
+Stop HBase Instance
+====================
+In order to stop HBase, execute the following command:
+
+$ cd ~/hbase-1.4.3/bin
+$ ./stop-hbase.sh
+
+Preparing HBase for Migration
+===============================
+Execute the following command to open HBase shell:
+
+$ cd ~/hbase-1.4.3/bin
+$ ./hbase shell
+hbase(main):001:0> create 'info','employee'
+hbase(main):002:0> create 'salary','employee'
+
+Sqoop
+========
+$ cd ~/
+$ wget http://www-eu.apache.org/dist/sqoop/1.4.7/sqoop-1.4.7.bin__hadoop-2.6.0.tar.gz
+$ tar -zxvf sqoop-1.4.7.bin__hadoop-2.6.0.tar.gz
+$ sudo nano ~/.bashrc
+
+Now copy the following lines at the end of this file:
+
+# Sqoop
+export SQOOP_HOME="/home/hadoopadmin/sqoop-1.4.7.bin__hadoop-2.6.0"
+export PATH=$PATH:$SQOOP_HOME/bin
+
+Now execute the following to reload bashrc file.
+
+$ source ~/.bashrc
+
+Execute the following command to do sqoop configuration. 
+
+$ cd $SQOOP_HOME/conf
+$ cp sqoop-env-template.sh sqoop-env.sh
+$ sudo nano sqoop-env.sh
+
+Verify Installation
+====================
+Execute the following:
+
+$ sqoop version
+
+MySQL JDBC Driver
+==================
+Download it from https://dev.mysql.com/downloads/connector/j/5.1.html. 
+$  tar -zxvf mysql-connector-java-5.1.46
+$ cd mysql-connector-java-5.1.46/
+$  cp mysql-connector-java-5.1.46-bin.jar $SQOOP_HOME/lib
+
+Data Import
+============
+Execute the following command:
+
+$ cd ~/
+$ mkdir sqoopfiles
+$ cd sqoopfiles
+$ sqoop import 
+    --bindir ./ 
+    --connect jdbc:mysql://localhost/employees 
+    --username root 
+    -P 
+    --table empInfo 
+    --hbase-table info 
+    --column-family employee
+
+Verify Data Import
+===================
+Execute the following command in hbase shell
+
+hbase(main):001:0> scan 'info'
+

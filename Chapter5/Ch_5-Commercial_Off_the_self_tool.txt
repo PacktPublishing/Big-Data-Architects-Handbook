@@ -1,0 +1,86 @@
+IoT Simulation Application
+=============================
+Copy the following lines of code in between <dependencies> </dependencies> tag, in your pom.xml file, which is available at the root of your project.
+
+<dependency>
+    <groupId>com.microsoft.azure</groupId>
+    <artifactId>azure-eventhubs</artifactId>
+    <version>0.15.1</version>
+</dependency>
+
+
+Now create a new class called SendStream and write down the following code.
+============================================================================
+
+package com.handbook.streamingapp;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
+import java.util.concurrent.ExecutionException;
+
+import com.microsoft.azure.eventhubs.*;
+
+public class SendStream {
+
+  public static void main(String[] args) 
+      throws ExecutionException, InterruptedException, IOException, EventHubException{
+    
+// fill in the required details below 
+// as per the variable name defined
+      final String namespaceName = "StreamApp";
+      final String eventHubName = "streamappevents";
+      final String sasKeyName = "RootManageSharedAccessKey";
+      final String sasKey = "----Put your shared key here---";
+
+// define connection to connect to Azure Eventhib
+      ConnectionStringBuilder connStr = new ConnectionStringBuilder(namespaceName, eventHubName, sasKeyName, sasKey);
+      
+// timestamp format to pass as JSon
+      SimpleDateFormat time = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+// Randomizer to generate random temperature and humidity values
+// as simulation
+      Random temp = new Random();
+      Random humd = new Random();
+      
+// Infinite loop to continuously send data similar to an IoT device
+      while(true) {
+      
+      int temperature = temp.nextInt(40)+20;
+      int humidity = humd.nextInt(50)+20;
+      
+// Json string to pass to Azure eventhub
+      String msg = "[{timestamp: "+ time.format(new Date()) +", temperature:" + temperature + ", humidity:" + humidity + "}]";
+      
+
+// Convert the Json to byte array as EventData can only 
+// accept data in form of byte array
+      byte[] payloadBytes = msg.getBytes("UTF-8");
+
+// EventData class initialize   
+      EventData sendEvent = new EventData(payloadBytes);
+
+// Eventhub Client class initialization based on the connection
+// string defined earlier
+      
+      EventHubClient ehClient = EventHubClient.createFromConnectionStringSync(connStr.toString());
+
+// Send data to Eventhub
+      ehClient.sendSync(sendEvent);
+      
+// Console output as to what was sent to the Azure 
+      System.out.println("Message Sent --> " + msg);
+
+// Wait for half second before sending the data again
+      Thread.sleep(500);
+      }
+  }
+}
+
+Stream Analytics Job Query 
+============================
+In order to do so, click on the Query box. we will simply select the timestamp, temperature and humidity from the data source. Our query is as follows.
+
+SELECT timestamp, temperature, humidity FROM streamappdata

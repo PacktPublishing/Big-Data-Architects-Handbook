@@ -1,0 +1,313 @@
+Cassandra Installation
+=======================
+1.Download Cassandra package from the website https://cassandra.apache.org/download/. Currently the stable release available is 3.11.1.
+
+2.Extract the package by executing the following command. It will be extracted in directory apache-cassandra-3.11.1. In our case the full path will be /home/hadoopadmin/apache-cassandra-3.11.1/
+$ tar zxvf apache-cassandra-3.11.1-bin.tar.gz
+
+3.	Setup environment variable by executing the following command.
+$ gedit ~/.bashrc
+
+4.	Copy the following line at the end of the file and save it. Make sure to change the path as per your installation.
+# Cassandra Environment 
+export CASSANDRA_HOME="/home/hadoopadmin/apache-cassandra-3.11.1/" 
+export PATH=$PATH:$CASSANDRA_HOME/bin
+
+5.	Reload environment file by executing the following command for your changes to take effect. Alternatively you can restart your computer.
+$ source ~/.bashrc
+
+Start Cassandra
+=================
+
+In order to start Cassandra, execute the following command:
+$ cassandra
+
+To verify that it is up and running, execute the following command.
+$ nodetool status
+
+Cassandra Query Language - CQL
+==============================
+To start CQL terminal, execute the following command.
+$ cqlsh
+
+// get builtin help
+cqlsh> help CREATE_KEYSPACE
+
+// It will list the basic information related to your cluster.
+cqlsh> describe Cluster
+
+// It will display the keyspaces define in this Cassandra Cluster
+cqlsh> describe Keyspaces
+
+// It will display all the tables created within a specific keyspace
+cqlsh> describe Tables
+
+// It will describe definition of a specific table. What are its column name 
+// and what are there types etc
+cqlsh> describe Table tablename
+
+// It will display all the user defined types in Cassandra.
+cqlsh> describe Types
+
+// It will display definition of specific typename.
+cqlsh> describe Type typename
+
+2.	Exit: This command is used to exit from the cqlsh terminal. Following is the syntax of exit command.
+cqlsh> exit
+
+3.	Show: Similar to describe command, it will also use to display different information but mostly related to cluster itself.
+// It will show the current Cassandra version and cql version information
+cqlsh> show version
+
+// It will show the current session host information 
+cqlsh> show host
+4.	Expand: It is used to display information in rows instead of column where required.
+// To enable expand feature in current terminal
+cqlsh> expand on
+
+// Toggle expand interface off
+cqlsh> expand off
+
+5.	Source: This command is used to read list of command from a text file and directly execute them in cqlsh.
+// You can replace the file path with your own file
+cqlsh> source '/home/user/command_list'
+
+Create, Alter and Delete Keyspace
+==================================
+Execute the following command to create a keyspace
+
+cqlsh> Create Keyspace testKeyspace With replication = {'class':'SimpleStrategy', 'replication_factor':3};
+
+To test whether the keyspace has been created successfully, execute the following command.
+cqlsh> describe keyspaces
+
+If want to list down the full details against each keyspaces that what its replication factor and which class you selected while creating keyspaces, execute the following command.
+cqlsh> select * from system_schema.keyspaces;
+
+To do the alteration, execute the following command.
+cqlsh> Alter Keyspace testKeyspace With replication = {'class':'SimpleStrategy', 'replication_factor':2};
+
+In order to delete the keyspace, execute the following command.
+cqlsh> drop keyspace testkeyspace;
+
+Create, Alter and Delete Tables
+===============================
+Execute the following command to create Student Table.
+cqlsh> Use StudentPortal;
+cqlsh:studentportal> Create table StudentInfo (std_id int PRIMARY KEY, std_name varchar, std_address text, std_phone varchar);
+
+To add a new column ClassName in studentinfo table, execute the following command.
+cqlsh:studentportal> Alter table studentinfo add class_name text;
+
+To remove any column from the table, execute the following commannd,
+cqlsh:studentportal> alter table studentinfo drop class_name;
+
+Assuming that you no longer need this table and its data. Now it's time to delete it from our database. For this purpose, execute the following command.
+cqlsh:studentportal> drop table studentinfo;
+
+Insert, Update and Delete Data
+==============================
+To insert our first record, execute the following command.
+cqlsh:studentportal> Insert into studentinfo (std_id, std_name, std_address, std_phone) values (1, 'John Doe', 'On Earth', '1-234-567890') 
+
+In order to update a record, execute the following query.
+cqlsh:studentportal> update studentinfo SET  std_address = 'On Moon', std_phone = '0-987-654321' where std_id = 1;
+
+To delete the record, execute the following query.
+cqlsh:studentportal> delete from studentinfo where std_id = 1
+
+MongoDB
+==================
+
+Installation
+=============
+
+1.	Ubuntu package management require that distributors sign packages with GPG keys for consistency and authenticity of the package. Execute the following command to import MongoDB GPG key.
+$ sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+
+2.	Execute the following command to create MongoDB source list
+$ echo "deb [ arch=amd64,arm64 ] http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list
+
+3.	Execute the following command to update the repository package details as we have now added MongoDB repository in the list.
+$ sudo apt-get update
+
+4.	Now it's time to install MongoDB by issuing the following command. It will automatically install the latest stable version of MongoDB.
+$ sudo apt-get install -y mongodb-org
+
+
+Start MongoDB
+==============
+
+Its time to test whether MongoDB installed successfully. In order to do it, issue the following commnad
+$ sudo service mongod start
+
+If it return to terminal without any error, it means it started successfully. To double check, MongoDB create log file in /var/log/mongodb/mongod.log. Open it with any test editor, and if its shows a message that its waiting for connection, means it working properly. Alternatively, you can issue a cat command to list the contents of the file as below.
+$ cat  /var/log/mongodb/mongod.log
+
+Whenever you want to stop server, issue the following command.
+$ sudo service mongod stop
+
+In order to restart server, issue the following command.
+$ sudo service mongod restart
+
+Working on MongoDB
+====================
+Type In the following command to start MongoDB shell session.
+$ mongo
+
+To list built in help details, execute the following command on MongoDB shell session that we have just started.
+> db.help()
+
+Basic Commands
+===============
+
+1.	 To List down all the databases exist in the current setup of MongoDB, execute any of the following command.
+> show databases;
+> show dbs;
+
+2.	To list down all the tables (collections) within a specific database, execute the following command
+// first switch to a database to explore its tables
+> use databasename;
+// To list down all the collection in a database
+> show collections;
+
+3.	To check, in which database currently you are working on, execute the following command
+> db
+
+4.	To clear the screen, execute the following command.
+> cls
+
+Create and Delete Database
+===========================
+Just execute use command to mention that from now on all command will be executed in a specific database.
+// Following command will check whether the database already exist. 
+// If not it will create a database with this name.
+> use schoolportal;
+
+If at any instance you want to delete the database, first you have switch to that database you want to delete, the execute the following command.
+// To switch to database that you want to delete
+> use schoolportal;
+
+// Now its time to delete it
+> db.dropDatabase();
+
+Create and Delete Collection
+=============================
+In order to create collection, execute the following command.
+> db.createCollection("collectionName");
+
+In order to delete the collection and all the documents inside it, execute the following command.
+// Replace the collectionName with the collection you want to remove
+> db.collectionName.drop();
+
+CRUD Operations
+=================
+1.	Each document can have different number of columns. Its up to you, how you place your data, under which collection and database. In order to insert a document, execute the following command. 
+> db.employees.insertOne({"first_name":"John", "last_name":"Doe"});
+
+2.	To insert documents in bulk, you can use function insertMany instead of insertOne as shown below.
+> db.employees.insertMany([
+        {"first_name":"Abc", "last_name":"xyz"}, 
+        {"first_name":"ijk", "last_name":"xyz"}
+    ]);
+
+3.	To retrieve all the records in employees collection, execute the following command. Figure-4.5.3 below display the command in operation and all the three records we have inserted just now.
+> db.employees.find()
+
+// If you want to display results vertically, use the following command
+> db.employees.find().pretty()
+
+4.	The beauty of MongoDB or NoSQL database is that there is no defined schema, so you can add columns on the fly and to only specific document. Let suppose you want to add phone number for employee Abc. For this purpose, issue the following command. Figure-4.5.4 display the output as well as verification command result as below.
+> db.employees.update({first_name:"Abc"}, {$set: {phone:"123456789"}})
+
+// Similarly to remove a column from a document,
+// execute the following command.
+> db.employees.update({first_name:"Abc"}, {$unset: {phone}})
+
+5.	To delete any document from a collection, execute the following command. As a parameter, you can apply any filter. For example purpose, we are going to delete a record where first name is mentioned as Abc. Figure-4.5.5 displays the output of the following command as well as verification command.
+> db.employees.deleteOne({first_name: "Abc"})
+
+// If your filter criteria return multiple documents, 
+// then execute the following command 
+> db.employees.deleteMany({first_name: "Abc"})
+
+Neo4j
+==============
+Installation
+=============
+1.	Execute the following to extract GPG key similar to what we did during MongoDB installation.
+$ wget -O - https://debian.neo4j.org/neotechnology.gpg.key | sudo apt-key add -
+
+2.	Execute the following command to create Neo4j repository source list.
+$ echo 'deb http://debian.neo4j.org/repo stable/' | sudo tee -a /etc/apt/sources.list.d/neo4j.list
+
+3.	Execute the following command to update the repository package details as we have now added Neo4j repository in the list.
+$ sudo apt-get update
+
+4.	Now it's time to install Neo4j by issuing the following command. It will download almost 200Mb of installation.
+$ sudo apt-get install neo4j=3.3.0
+
+Start Neo4j
+============
+Once you finish the installation, it will automatically start Neo4j service in the backend. To verify, whether it is active and working properly, issue the following command.
+$ service neo4j status
+
+Cypher Query Language
+======================
+Create Node, Relationships and Properties
+==========================================
+In order to create Node, execute the following command.
+// Single node creation with Title
+$ Create (n:User)
+
+Consider now we have two users John and Andrew. They become friends.  In Neo4j, it's now time to create Relationship between them, so that when you query the database in a graph form, it will display a friend relationship between them. For this purpose, execute the following command.
+// Search for the node type for which relationship is required
+$ MATCH (a:User),(b:User)
+
+// Filter the exact result
+WHERE a.firstname = 'John' AND b.firstname = 'Andrew'
+
+// Create relationship titled Friend
+CREATE (a)-[r:Friend]->(b)
+RETURN r
+
+To create Properties, execute the following command.
+// Single node creation with title as well as with properties
+$ Create (n:User {firstname: 'John', lastname: 'Doe'} )
+
+Update Node, Relationships and Properties
+===========================================
+To perform update action, execute the following command.
+$ Merge (u:User {firstname:'John'}) 
+set u.age = 30 
+Return u
+
+Delete Node, Relationships and Properties
+============================================
+To delete a Node, execute the following command. 
+// to delete all user nodes
+$ Match (u:User)
+Delete u
+
+// to delete based on filter criteria
+$ Match (u:User)
+where u.name = 'John'
+Delete u
+
+To delete a node with a Relationship, execute the following command.
+$ Match (u:User)
+where u.name = 'John'
+Detach Delete u
+
+To delete Properties, execute the following command. 
+$ Match (u:User)
+where u.firstname = 'John'
+Remove u.lastname
+Return u
+
+Read Node, Relationships and Properties
+===========================================
+Execute the following query to retrieve data in graph form to list all friends of user John. 
+$ MATCH (u:User)
+WHERE u.firstname = 'John'
+RETURN u

@@ -1,0 +1,160 @@
+Following command will create a directory called hadooptest in root of HDFS file system. 
+hadoopadmin@hadoopadmin-VirtualBox:~$ hdfs dfs -mkdir /hadooptest
+--------------------------------------------------------------------------------------------------
+Now execute the below command to list down the files and directories present in HDFS and to verify that above command executed successfully and has created directory for us.
+hadoopadmin@hadoopadmin-VirtualBox:~$ hdfs dfs -ls /
+
+--------------------------------------------------------------------------------------------------
+To copy this file from my home directory 
+hadoopadmin@hadoopadmin-VirtualBox:~$ hdfs dfs -put test.txt /hadooptest/
+
+--------------------------------------------------------------------------------------------------
+Create a folder hdfsfiles in your local file system by executing the following command
+hadoopadmin@hadoopadmin-VirtualBox:~$ mkdir hdfsfiles
+
+--------------------------------------------------------------------------------------------------
+After creating the folder, we will extract file from HDFS and put it in local system in above created folder by executing the following command.
+hadoopadmin@hadoopadmin-VirtualBox:~$ hdfs dfs -get /hadooptest/test.txt hdfsfiles/
+
+--------------------------------------------------------------------------------------------------
+To verify that the file has been copied to our local file system, execute the following command. 
+hadoopadmin@hadoopadmin-VirtualBox:~$ ls hdfsfiles/
+
+--------------------------------------------------------------------------------------------------
+to delete this file. To delete it from HDFS, execute following command
+hadoopadmin@hadoopadmin-VirtualBox:~$ hdfs dfs -rm /hadooptest/test.txt
+
+--------------------------------------------------------------------------------------------------
+To delete the folder from HDFS, execute following command
+hadoopadmin@hadoopadmin-VirtualBox:~$ hdfs dfs -rmdir /hadooptest
+
+--------------------------------------------------------------------------------------------------
+Create utility directory and copy this file into HDFS by executing the following commands.
+hadoopadmin@hadoopadmin-VirtualBox:~$ hdfs dfs -mkdir /utility/ 
+hadoopadmin@hadoopadmin-VirtualBox:~$ hdfs dfs -put log.txt /utility/
+
+--------------------------------------------------------------------------------------------------
+Driver Program
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class UtilityBillSummary {
+  public static void main(String[] args) throws Exception {
+
+      //Initiate Hadoop Configuration class
+      Configuration conf = new Configuration();
+
+      // It is to configure a MapReduce Job and assigning it a name
+      // for logging purposes
+      Job job = Job.getInstance(conf, "UtilityBillSummary");
+      job.setJarByClass(UtilityBillSummary.class);
+
+      // In this step we will define what are the names of out Mapper 
+      // and Reducer classes
+      job.setMapperClass(UtilityMapper.class);
+      job.setReducerClass(UtilityReducer.class);
+
+      // Here we are defining the types of <Key, Value> pairs
+      // Key will be of Text type i.e. String
+      // Value will be of Long type
+      job.setOutputKeyClass(Text.class);
+      job.setOutputValueClass(LongWritable.class);
+
+      // Here we are assigning the input and output files
+      // which will be passed while executing program
+      FileInputFormat.addInputPath(job, new Path(args[0]));
+      FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+      // Wait until MapReduce Job finishes
+      System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
+}
+
+--------------------------------------------------------------------------------------------------
+Mapper Program
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+import java.io.IOException;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+public class UtilityMapper extends Mapper<Object, Text, Text, LongWritable> {
+
+  // Initialize key and value part of the pair
+  private Text utility = new Text();
+  private LongWritable amount = new LongWritable(1);
+
+  public void map(Object key, Text value, Context context) 
+                    throws IOException, InterruptedException {
+
+    // Mapper receive line by line of the text file
+    String row = value.toString();
+
+    // Check whether the text line contains data or its empty
+    if (!row.isEmpty()) {
+
+      // Split the data based in <space> deliminator
+      String[] rowValues = row.split(" "); 
+
+      // set name of the utility
+      utility.set(rowValues[0]);
+
+      // set amount paid for that utility
+      amount.set(Long.parseLong(rowValues[2]));
+
+      // assign Utility as Key and Amount as value in keyValue pair
+      context.write(utility, amount);
+    } 
+  }
+}
+
+--------------------------------------------------------------------------------------------------
+Reducer Program
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+import java.io.IOException;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
+public class UtilityReducer extends Reducer<Text,LongWritable,Text,LongWritable> {
+  private LongWritable result = new LongWritable();
+
+  public void reduce(Text key, Iterable<LongWritable> values, Context context) 
+      throws IOException, InterruptedException {
+        
+        // Initiate variable total 
+        long total = 0;
+
+        // Go through all the values for a specific key and sum them up
+        // to achieve our desired output.
+        for (LongWritable val : values) {
+              total += val.get();
+        }
+
+        // Assign calculated value
+        result.set(total);
+
+        // Assign the Utility as Key and the summed amount as value     
+        context.write(key, result);
+    }
+}
+--------------------------------------------------------------------------------------------------
+Put all three classes in the same folder and execute the following command to compile them.
+hadoopadmin@hadoopadmin-VirtualBox:~$ javac -classpath $(hadoop classpath) UtilityBillSummary.java UtilityMapper.java UtilityReducer.java 
+
+--------------------------------------------------------------------------------------------------
+Once it complied successfully, execute the following command to make Jar file that contains the compiled .class files
+hadoopadmin@hadoopadmin-VirtualBox:~$ jar -cvf utilitysummary.jar *.class
+
+--------------------------------------------------------------------------------------------------
+Type in the following command as per the values mentioned above to execute our first MapReduce Job.
+hadoopadmin@hadoopadmin-VirtualBox:~$ hadoop jar utilitysummary.jar UtilitySummary /utility/log.txt /utilityOutput
+

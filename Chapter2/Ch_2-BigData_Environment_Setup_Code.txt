@@ -1,0 +1,105 @@
+Java Installation
+------------------
+1. Download JDK and JRE from http://www.oracle.com/technetwork/java/javase/downloads/index.html
+2. Copy the downloaded tar.gz file to the location where you want to install java.
+3. Extract and install java by using the following command. Make sure to replace "8u144" with the java version you have downloaded.
+
+hadoopadmin@hadoopadmin-VirtualBox:~$ tar zxvf jdk-8u144-linux-x64.tar.gz
+
+4. Next step is to point the system to the extracted directory. In our case, files are extracted in /home/hadoopadmin/jdk1.8.0_144/ folder. Execute the following command to make this Java version as default JVM
+
+hadoopadmin@hadoopadmin-VirtualBox:~$ sudo update-alternatives --install /usr/bin/java java /home/hadoopadmin/jdk1.8.0_144/bin/java 100
+hadoopadmin@hadoopadmin-VirtualBox:~$ sudo update-alternatives --install /usr/bin/javac javac /home/hadoopadmin/jdk1.8.0_144/bin/javac 100
+
+5. To make sure java is installed correctly, use the following command to check java version.It will display output similar to Figure-2.4.1
+
+hadoopadmin@hadoopadmin-VirtualBox:~$ java -version
+
+6. Once the installation finishes, you can delete the downloaded file as it is nolonger required.
+
+
+SSH Installation and Configuration
+-----------------------------------
+
+1. Run the following command to install SSH
+
+hadoopadmin@hadoopadmin-VirtualBox:~$ sudo apt-get install ssh
+hadoopadmin@hadoopadmin-VirtualBox:~$ sudo apt-get install rsync
+
+2. Run following command to generate SSH key
+
+hadoopadmin@hadoopadmin-VirtualBox:~$ ssh-keygen -t rsa -P ""
+
+3. Next step is to enable SSH access locally using the above generated keys. For this purpose, execute the following command
+
+hadoopadmin@hadoopadmin-VirtualBox:~$ cat $HOME/.ssh/id_rsa.pub >> $HOME/.ssh/authorized_keys
+
+4. Run the following command to test your configuration
+
+hadoopadmin@hadoopadmin-VirtualBox:~$ ssh localhost
+
+
+Hadoop System User
+------------------
+
+Run following command if you want to create dedicated user for hadoop services
+
+hadoopadmin@hadoopadmin-VirtualBox:~$ sudo addgroup hadoop
+hadoopadmin@hadoopadmin-VirtualBox:~$ sudo adduser --ingroup hadoop hduser
+
+
+Apache Hadoop Installation
+----------------------------
+
+1. Download stable version of Apache Hadoop from http://www-us.apache.org/dist/hadoop/common/. As of now the stable version available for download is hadoop-2.8.1.
+2. Extract the downloaded file by using the following command
+
+hadoopadmin@hadoopadmin-VirtualBox:~$ tar zxvf hadoop-2.8.1.tar.gz
+
+3. It time to configure some parameters to run Hadoop. Use the following command to edit hadoop-env.sh configuration file.
+
+hadoopadmin@hadoopadmin-VirtualBox:~$ gedit etc/hadoop/hadoop-env.sh
+
+Look for the following line to set Java Home path. Replace /home/hadoopadmin/jdk1.8.0_144/ with the directory where you have installed it. In our case, it will remain same.
+
+# set to the root of your Java installation
+export JAVA_HOME=/home/hadoopadmin/jdk1.8.0_144/
+
+4. To test if its configured correctly, execute the following command
+
+hadoopadmin@hadoopadmin-VirtualBox:~$ bin/hadoop
+
+Hadoop Configuration
+---------------------
+
+1. Edit core-site.xml configuration file and copy following code in between <configuration>..</configuration> tabs.
+
+<property>
+ <name>fs.defaultFS</name>
+Big Data Environment Setup
+ <value>hdfs://localhost:9000</value>
+</property>
+
+2. Edit hdfs-site.xml file and copy the following in
+between <configuration>..</configuration> tabs. You can change the value from 1
+to any number depends on how many copies of data you want to replicate.
+
+<property>
+ <name>dfs.replication</name>
+ <value>1</value>
+</property>
+
+Hadoop Server Start and Stop
+-----------------------------
+1. Execute the following command to format name node, only for the first time while configuring hadoop.
+
+hadoopadmin@hadoopadmin-VirtualBox:~$ bin/hdfs namenode -format
+
+2. To start Hadoop server, execute following command.
+
+hadoopadmin@hadoopadmin-VirtualBox:~$ sbin/start-dfs.sh
+
+4. To stop Hadoop server, execute following command.
+
+hadoopadmin@hadoopadmin-VirtualBox:~$ sbin/stop-dfs.sh
+

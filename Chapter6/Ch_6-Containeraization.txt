@@ -1,0 +1,179 @@
+Docker Installation
+====================
+Execute the following command to enable capability of adding a repository over http command.
+$ sudo apt-get install apt-transport-https ca-certificates curl software-properties-common
+
+Execute the following command to add Docker official GPG key
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+Execute the following command to add Docker repository
+$ sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+Now update your local repository database by executing the following command
+$ sudo apt-get update
+
+It's now time to install Docker Community Edition into your system by execute the following command.
+$ sudo apt-get install docker-ce
+
+It will install the highest available stable version of the docker into your system. If you want to install any specific version of the docker, use the following command. Make sure to replace <VERSION> with the required version.
+$ sudo apt-get install docker-ce=<VERSION>
+
+It is around 129MB download and takes few minutes to install. Once its installed, execute the following command to verify the installation.
+$ sudo docker run hello-world
+
+Basic Commands
+==============
+Execute the following command to list down help menu.
+$ docker --help
+
+In order to identify the current installed version of the docker, execute the following command.
+$ docker --verion
+
+If you want to know detailed information including how many containers images are currently installed, how many of them are in different running state etc, execute the following command. The output of this command is shown in Figure-03.
+$ sudo docker info
+
+If you want to find out, what are the images or container available in your local machine, execute the following command to list all of them. Figure-04 illustrates its output.
+$ sudo docker image ls
+
+To list down the containers are the currently running, execute the following command. Figure-05 illustrate the output of this command
+$ sudo docker ps
+
+// Alternate command to list all running containers
+$ sudo docker container ls
+
+To list down all the container whether they are running or in stop state, execute the following command. Figure-06 display the output of this command.
+$ sudo docker ps -a
+
+To stop a running container, execute the following command:
+// Replace adoring-sammet with the container name you want to stop
+$ sudo docker stop adoring-sammet
+
+To remove or delete a container image, execute the following command. First make sure that it is not running and in stop state.
+// Replace adoring-sammet with the container name you want to delete
+$ sudo docker rm adoring-sammet
+
+In order to see different resource utilization by the containers like CPU and memory, execute the following command
+$ sudo docker container stats
+
+Building a Docker Image
+=======================
+Let's get started. First step is to create a folder by name dockerImage by executing the following command. 
+$ mkdir dockerImage
+
+Next step is to create a HTML page. Open a text editor of your choice and write the following code in it and save it by name index.html in the same folder dockerImage.
+<html>
+<head>
+  <title>Big Data Architect's Handbook</title>
+</head>
+<body>
+  <h1>Welcome to Docker Container</h1>
+  example from Big Data Architect's Handbook
+</body>
+</html>
+
+Next step is to create a Dockerfile. It is a configuration file to build a docker image. It contains all the information from base operating system to different commands. These command can be to copy file into docker image or to do any configuration within the base operating system. Open a text editor of your choice and write down the following code in it. Save it by name of Dockerfile within the same folder dockerImage.
+FROM nginx:alpine
+COPY ./index.html /usr/share/nginx/html
+
+Lets now issue a following build command create our first docker image. Figure-00 displays the output of the following command.
+$ docker build -t webserver .
+
+Run and Verify Docker Image
+============================
+We have successfully build our first docker image, which runs a Nginx web server and host our static webpage in a container. Issue the following command to run the docker container.
+$ docker run -d -p 80:80 webserver:latest
+
+Import and Export Docker Image
+==============================
+Now that you have build your docker image and tested it successfully. In real world, you  may required to give this image to your testing team or to your production team. In order to export your docker image, execute the following command. Figure-00 display the output of this command.
+$ docker save smfahad/webserver > webserver.tar
+
+Now that you got the docker image file, let suppose you now required it to load it your test or production environment. To do it, execute the following command. Figure-00 displays the output of this command.
+$ docker load --input webserver.tar
+
+Docker Swarm
+===============
+In order to make a manager, execute the following command.
+$ sudo docker swarm init --listen-addr 10.0.2.15:2377
+
+In the output, as you can see, it is displaying a message that the current node is now a manager. Another way to list down all the nodes available in the swarm with their status, whether they are worker or a manger, executes the following command.
+$ sudo docker node ls
+
+Now to add a worker node in Swarm, to login to the machine which you want to make it as worker. In our case, it will be 10.0.2.16. Execute the following command from its terminal.
+$ docker swarm join 10.0.2.15:2377
+
+
+Create Service Container
+========================
+For demonstration purposes, we will be running Nginx image in container. Nginx is an open source web server. We will not be discussing nginx or any of its functionalities in this discussion. We will just be using its image to understand service and replication concept in docker swarm. Let's first create a service. Execute the following command in manager node terminal. 
+$ docker service create --name NginxServer nginx
+
+To verify that the services has been created and running in the background, execute the following command.
+$ sudo docker service ls
+
+Replicating Container
+======================
+As you can see, service ls command list the service that we have just created with 1/1 replication factor. Let suppose, we want to create a service with replication factor of 5. Execute the following command to fulfil our requirement.
+$ docker service create --name NginxServer --replicas 5 nginx
+
+To list the details regarding each replicated service, execute the following command.
+// Replace NginxServer with the desired service name
+$ sudo docker service ps NginxServer
+
+Remove Container Service
+========================
+Once your desired task completed or whatever reason you want to stop or delete a service, execute the following command.
+$ sudo docker service rm NginxServer
+
+Kubernetes Installation
+========================
+The first component that require in road to installation is kubectl. Its a command line interface to interactive with Kubernetes. Execute the following command to download it in you computer.
+$ curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+
+This command will download the latest stable version of kubectl into your computer. To make it executable, run the following command.
+$ chmod +x ./kubectl
+
+Now move the executable of kubectl to the PATH of your binaries so that kubectl command will be accessible from your terminal in any location.
+$ sudo mv ./kubectl /usr/local/bin/kubectl
+
+Now that we have setup kubectl, lets now install minikube. Execute the following command to download it.
+$ curl -Lo minikube https://storage.googleapis.com/minikube/releases/v0.24.1/minikube-linux-amd64
+
+Execute the following command to make it executable.
+$ chmod +x minikube 
+
+Now similar to kubectl, move minikube executable to the PATH of you binaries by executing the following command.
+$ sudo mv minikube /usr/local/bin/
+
+In order to verify that the kubectl and minikube installed successfully, execute the following command.
+$ kubectl version
+$ minikube version
+
+Now that we have successfully installed VirtualBox. Its now time to start MiniKube. For this purpose, execute the following command
+$ minikube start
+
+Deployment
+===========
+We will use the same Docker image which we created in Docker Image section of this chapter, to deploy and run in our kubernetes cluster. In order to do it, execute the following command.
+// Use this command to deploy docker image
+$ kubectl run webserver --image=webserver --port=80
+
+// Verification command
+$ kubectl get deployments
+
+Next step is to expose the deployed image so that you can access the container using port 80 which is best suited for http request. Execute the following command in order to do it.
+// Expose the deployed service for external use
+$ kubectl expose deployment webserver --port=80 --type=NodePort
+
+//Verification command
+$ kubectl get services
+
+Kubernetes Dashboard
+======================
+
+1.	Execute the following to install Kubernetes Dashboard.
+$ kubectl create -f https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml
+
+2.	Once the execution of the installation command completes, you can execute the following command to start serving the dashboard.
+$ kubectl proxy
+
