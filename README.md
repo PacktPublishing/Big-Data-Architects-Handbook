@@ -51,21 +51,16 @@ With the following software and hardware list you can run all code files present
 We also provide a PDF file that has color images of the screenshots/diagrams used in this book. [Click here to download it](https://www.packtpub.com/sites/default/files/downloads/BigDataArchitectsHandbook_ColorImages.pdf).
 
 ### Related products <Paste books from the Other books you may enjoy section>
-* Linux: Powerful Server Administration [[Packt]](https://www.packtpub.com/networking-and-servers/linux-powerful-server-administration?utm_source=github&utm_medium=repository&utm_campaign=9781788293778) [[Amazon]](https://www.amazon.com/dp/1788293770)
+* Big Data Analytics with Hadoop 3 [[Packt]](https://www.packtpub.com/big-data-and-business-intelligence/big-data-analytics-hadoop-3?utm_source=github&utm_medium=repositary&utm_campaign=9781788628846) [[Amazon]](https://www.amazon.com/dp/1788628845)
 
-* Linux Device Drivers Development [[Packt]](https://www.packtpub.com/networking-and-servers/linux-device-drivers-development?utm_source=github&utm_medium=repository&utm_campaign=9781785280009) [[Amazon]](https://www.amazon.com/dp/1788293770)
+* Artificial Intelligence for Big Data [[Packt]](https://www.packtpub.com/big-data-and-business-intelligence/artificial-intelligence-big-data?utm_source=github&utm_medium=repositary&utm_campaign=9781788472173) [[Amazon]](https://www.amazon.com/dp/1788472179)
 
 ## Get to Know the Author(s)
-**Author Name**
-Bio
-
-**Author Name**
-Bio
+**Syed Muhammad Fahad Akhtar**
+Syed Muhammad Fahad Akhtar has 12+ years of industry experience in analysis, designing, developing, integrating, and managing large applications in different industries. He has vast exposure of working in UAE, Pakistan, and Malaysia and is currently working in ASIT Solutions as a solution architect.
+He received his master’s from Torrens University, Australia, and bachelor of science in computer engineering from National University of Computer and Emerging Sciences (FAST), Pakistan.
 
 
-## Other books by the authors
-* [Big Data Analytics with Hadoop 3](https://www.packtpub.com/big-data-and-business-intelligence/big-data-analytics-hadoop-3?utm_source=github&utm_medium=repositary&utm_campaign=9781788628846)
-* [Artificial Intelligence for Big Data](https://www.packtpub.com/big-data-and-business-intelligence/artificial-intelligence-big-data?utm_source=github&utm_medium=repositary&utm_campaign=9781788472173)
 
 ### Suggestions and Feedback
 [Click here](https://docs.google.com/forms/d/e/1FAIpQLSdy7dATC6QmEL81FIUuymZ0Wy9vH1jHkvpY57OiMeKGqib_Ow/viewform) if you have any feedback or suggestions.
